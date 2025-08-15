@@ -11,28 +11,63 @@ I first began using ledger because it checked off several items I was concerned 
 - I wanted a human readable record that didn't lock me in to any 3rd party software
 - It didn't hurt that I prefer a keyboard to a mouse
 
-As a software developer, I am very comfortable in the terminal. It was nice to have the ability to run reports and to be able to use the command line utility in my own scripts.
+As a software developer, I am very comfortable in the terminal. It was nice to have the ability to run reports and to be able to use the ledger command line utility in my own scripts.
 
 The biggest issue I ran into was how to organize my files and generally the best way to use them for daily processing and reporting. I found a lot of help at [Plain Text Accounting](https://plaintextaccounting.org).
 
-Over the years, I have come up with a process for how I manage all of this. I am documenting this process here. I am currently using Claude Code to automate a lot of the process.
-
-Anthropic's policy is to not train based on user input. They also do not persist this data unless specifically instructed to. Despite this, if you are uncomfortable submitting your data there are local models that should work as well. I have not yet evaluated any local models but plan to in the future.
-
-Below are some LLM generated instructions on getting started with ledger. I intend to replace this with more specific instructions at some point.
+Over the years, I have come up with a process for how I manage all of this. I am documenting this process here. I am currently using Claude Code to automate a lot of this process.
 
 ## Installation
 
-### macOS
+### Ledger
+
+#### macOS
 
 ```bash
 brew install ledger
 ```
 
-### Linux (Debian/Ubuntu)
+#### Linux (Debian/Ubuntu)
 
 ```bash
 sudo apt-get install ledger
+```
+
+For more information, visit: <https://www.ledger-cli.org>
+
+### Claude Code
+
+```bash
+npm install -g @anthropic/claude-code
+```
+
+For more information, visit: <https://docs.anthropic.com/en/docs/claude-code>
+
+## File Organization
+
+```bash
+ledger-starter/
+├── .claude/
+│   └── commands/
+│       ├── process-inbox.md    # Command to process receipts/invoices
+│       └── format.md           # Command to format ledger files
+├── 2025/                       # Year folder for transactions
+│   ├── opening.ledger          # Opening balances
+│   ├── 2025-01.ledger          # monthly ledger file
+│   ├── Receipts/               # Receipt PDFs by month
+│   │   └── 01-January/
+│   └── Invoices/               # Invoice PDFs by month
+│       └── 01-January/
+├── docs/
+│   ├── daily-process.md        # Daily workflow documentation
+│   └── receipt-processing.md   # Receipt processing guide
+├── inbox/                      # Staging area for unprocessed documents
+├── accounts                    # Chart of accounts
+├── account-cards              # Card last-4 to account mappings
+├── payees                     # Vendor list with default categories
+├── item-categories.md         # Line-item categorization rules
+├── CLAUDE.md                  # Claude Code instructions
+└── README.md                  # This file
 ```
 
 ## Basic Concepts
@@ -54,163 +89,80 @@ The sum of all entries must equal zero.
 - **Expenses**: Money going out (rent, food, utilities)
 - **Equity**: Net worth (opening balances)
 
-## Creating Your First Ledger File
+## Your Ledger Files
 
-Create a file named `main.ledger`:
+By default the `ledger` command line application will look for
+default values at `~/.ledgerrc`. Here you can set your default
+sort date, currency and file.
+
+```bash
+--exchange $
+--sort date
+--file main.ledger
+```
+
+I have named mine `main.ledger`. In it I include my [accounts](./accounts) and [payees](./payees) lists. I also include a ledger file per year. I keep this file in dedicated folder for that year. So for example [2025/2025.ledger](./2025/2025.ledger).
+
+Now I can create monthly files like `2025/2025-01.ledger` and include them in the yearly file. These files are nice and small perfect for claude's context window.
 
 ```ledger
-; Opening balances
-2025/01/01 Opening Balance
-    Assets:Checking                 $1,000.00
-    Equity:Opening Balances
+; Transaction with receipt reference
+2025/01/15 * Walmart
+    ; Receipts - (receipts/01-January/01-15-2025-Walmart.pdf):
+    Expenses:Food:Grocery            $45.23
+    Expenses:Home:Household          $12.45
+    Liabilities:Credit:Amex         $-57.68
 
-; Simple transaction
-2025/01/15 Grocery Store
-    Expenses:Food:Groceries            $50.00
-    Assets:Checking
+; Pending invoice (due date, not invoice date)
+2025/01/25 ! Comcast
+    ; Invoices - (invoices/01-January/01-05-2025-Comcast.pdf):
+    Expenses:Utilities:Internet      $79.99
+    Liabilities:Credit:Amex         $-79.99
 
-; Paycheck with multiple splits
-2025/01/31 Employer
-    Assets:Checking                 $3,000.00
-    Income:Salary                  -$3,500.00
-    Expenses:Taxes:Federal            $400.00
-    Expenses:Taxes:State              $100.00
-
-; Credit card payment
-2025/02/01 Credit Card Payment
-    Liabilities:CreditCard            $500.00
-    Assets:Checking
+; Cleared transaction from bank reconciliation
+2025/01/31 * Employer
+    Assets:Checking:Main          $3,000.00
+    Income:Salary                -$3,500.00
+    Expenses:Taxes:Federal          $400.00
+    Expenses:Taxes:State            $100.00
 ```
 
-## Basic Commands
+### Accounts file
 
-### View balance of all accounts
-
-```bash
-ledger -f main.ledger balance
-```
-
-### View checking account register
-
-```bash
-ledger -f main.ledger register Checking
-```
-
-### Monthly expenses report
-
-```bash
-ledger -f main.ledger -M register Expenses
-```
-
-### Balance sheet (assets vs liabilities)
-
-```bash
-ledger -f main.ledger balance Assets Liabilities
-```
-
-### Income statement
-
-```bash
-ledger -f main.ledger balance Income Expenses
-```
-
-### Search transactions
-
-```bash
-ledger -f main.ledger register payee "Grocery Store"
-```
-
-## File Organization Tips
-
-### Recommended structure
-
-```bash
-finances/
-├── main.ledger          # Main file that includes others
-├── accounts.ledger      # Account declarations
-├── 2025/
-│   ├── 01-january.ledger
-│   ├── 02-february.ledger
-│   └── ...
-└── prices.db           # Historical prices (optional)
-```
-
-### Main file example
+The accounts file defines your chart of accounts - the complete hierarchy of all financial accounts you track. This establishes the valid account names that can be used in transactions and ensures consistency across your ledger files.
 
 ```ledger
-; main.ledger
-include accounts.ledger
-include 2025/*.ledger
-```
-
-### Account declarations (accounts.ledger)
-
-```ledger
-; Account declarations help with auto-completion and typo detection
-account Assets:Checking
-account Assets:Savings
-account Expenses:Food:Groceries
-account Expenses:Food:Restaurants
+; accounts file - defines account hierarchy
+account Assets:Checking:Main
+account Assets:Checking:Billpay
+account Liabilities:Credit:Amex
+account Liabilities:Credit:Main
+account Expenses:Food:Grocery
+account Expenses:Home:Household
+account Expenses:Utilities:Internet
 account Income:Salary
-account Liabilities:CreditCard
 ```
 
-## Advanced Features
+### Payees file
 
-### Automated transactions
+The payees file maintains a standardized list of vendors and merchants you transact with. This ensures consistent naming across all transactions and can include default expense account mappings for each payee to streamline transaction entry.
 
 ```ledger
-; Automatically allocate 20% of income to savings
-= Income:Salary
-    Assets:Savings                    0.20
-    Assets:Checking                  -0.20
+; payees file - standardized vendor names
+payee Walmart
+payee Target
+payee Comcast
+payee CVS
 ```
 
-### Assertions (verify balances)
+### Account-cards mapping
+
+The account-cards file maps the last 4 digits of your payment cards to their corresponding ledger accounts. This enables automatic account assignment when processing receipts, ensuring transactions are charged to the correct credit card or bank account.
 
 ```ledger
-2025/01/31 * Balance Assertion
-    Assets:Checking                    $0 = $3,450.00
-```
-
-### Budgeting
-
-```bash
-ledger -f main.ledger --budget --monthly register Expenses
-```
-
-### Multi-currency
-
-```ledger
-2025/01/15 Currency Exchange
-    Assets:Euro                     €100.00
-    Assets:USD                     -$110.00
-```
-
-## Common Queries
-
-### Current net worth
-
-```bash
-ledger -f main.ledger balance Assets Liabilities
-```
-
-### This month's expenses by category
-
-```bash
-ledger -f main.ledger -p "this month" balance Expenses
-```
-
-### Year-to-date income
-
-```bash
-ledger -f main.ledger -p "this year" balance Income
-```
-
-### Uncleared transactions
-
-```bash
-ledger -f main.ledger register --uncleared
+; account-cards file - maps card last-4 to accounts
+card 1025 Liabilities:Credit:Amex
+card 8027 Liabilities:Credit:Main
 ```
 
 ## Best Practices
@@ -223,18 +175,22 @@ ledger -f main.ledger register --uncleared
 
 ## Resources
 
+- Plain Text Accounting: <https://plaintextaccounting.org>
 - Official Documentation: <https://www.ledger-cli.org/docs.html>
 - Manual: <https://www.ledger-cli.org/3.0/doc/ledger3.html>
 - Community: <https://www.reddit.com/r/plaintextaccounting/>
 - Example files: <https://github.com/ledger/ledger/tree/master/test/input>
 
-## Quick Start Checklist
+## Notes
 
-- [ ] Install ledger
-- [ ] Create your first ledger file
-- [ ] Set up opening balances
-- [ ] Enter a few transactions
-- [ ] Run `ledger balance` to see account totals
-- [ ] Run `ledger register` to see transaction history
-- [ ] Set up a file organization system
-- [ ] Consider automation tools for importing bank data
+### Why No Auto-Import
+
+I deliberately don't auto-import transactions from banks or credit cards. Manual entry forces me to review every transaction, catch errors, and stay aware of my spending patterns. Similarly, using LLMs for transaction processing requires me to verify their output since I don't 100% trust their accuracy. Both approaches keep me engaged with my finances rather than letting them run on autopilot.
+
+### Budgets
+
+I've omitted budgets from this starter setup because I haven't focused on implementing them yet. This is something I plan to add in the future as ledger has powerful budget tracking capabilities.
+
+### LLMs and Plain Text Accounting
+
+This repository primarily demonstrates how to leverage LLMs (like Claude Code) with plain text accounting. The combination of structured text files and AI assistance creates a powerful workflow - you get the control and transparency of plain text with the automation capabilities of modern AI tools.

@@ -1,0 +1,20 @@
+# January 2025 Transactions
+# Monthly files work better with LLM's since they are shorter
+# Yearly files can sometimes get too large for the model to process effectively
+
+2025/01/15 * Walmart
+    ; Receipts - (receipts/01-January/01-15-2025-Walmart.pdf):
+    Expenses:Food:Grocery            $45.23
+    Expenses:Home:Household          $12.45
+    Liabilities:Credit:Amex         $-57.68
+
+2025/01/25 ! Comcast
+    ; Invoices - (invoices/01-January/01-05-2025-Comcast.pdf):
+    Expenses:Utilities:Internet      $79.99
+    Liabilities:Credit:Amex         $-79.99
+
+ 2025/01/31 * Employer
+    Assets:Checking:Main          $3,000.00
+    Expenses:Taxes:Federal          $400.00
+    Expenses:Taxes:State            $100.00
+    Income:Salary                -$3,500.00

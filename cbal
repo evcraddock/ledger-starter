@@ -1,0 +1,4 @@
+#! /bin/bash
+
+clear
+ledger cleared bal Assets Liabilities --no-pager

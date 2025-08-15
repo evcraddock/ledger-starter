@@ -1,0 +1,29 @@
+# Assets
+account Assets:Savings:Main
+	alias Main Savings
+account Assets:Checking:Billpay
+	alias Bill Payment Account
+
+# Auto Expenses
+account Expenses:Auto
+account Expenses:Auto:Fuel
+	payee ^(Shell|Phillips 66|Oncue)$
+
+# Entertainment Expenses
+account Expenses:Entertainment
+account Expenses:Entertainment:Movies
+account Expenses:Entertainment:Music
+account Expenses:Entertainment:Games
+account Expenses:Entertainment:Books
+account Expenses:Entertainment:Streaming
+	payee ^(Amazon Prime|Youtube TV|Netflix)$
+
+# Food Expenses
+account Expenses:Food:Grocery
+account Expenses:Food:Dining
+
+# Credit Card Liabilities
+account Liabilities:Credit:Visa
+
+# Loan Liabilities
+account Liabilities:Loan:Car

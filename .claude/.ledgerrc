@@ -1,0 +1,3 @@
+--exchange $
+--sort date
+--file current.ledger

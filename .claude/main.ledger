@@ -1,0 +1,4 @@
+include accounts
+include payees
+
+include 2025/2025.ledger

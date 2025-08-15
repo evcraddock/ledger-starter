@@ -1,0 +1,10 @@
+# Account Cards Mapping
+# Maps last 4 digits of cards to their corresponding accounts
+# Often receipts list the last 4 digits of the card used
+
+# Credit Cards
+card 1111    Liabilities:Credit:Visa
+
+# Debit Cards
+# Add debit card mappings here as needed
+card 1234    Assets:Checking:Billpay
