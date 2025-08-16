@@ -12,7 +12,7 @@ Mostly for documentation, but also for anyone who is interested, I have decided 
 
 ## Setup
 
-I use the [ledger-starter](https://github.com/your-username/ledger-starter) GitHub repository as a base for my ledger setup. To use it for your personal finances:
+I use the [ledger-starter](https://github.com/evcraddock/ledger-starter) GitHub repository as a base for my ledger setup. To use it for your personal finances:
 
 ```bash
 git clone https://github.com/evcraddock/ledger-starter.git
@@ -25,7 +25,7 @@ The [README](../README.md) contains detailed installation instructions for both 
 
 ## Daily Process
 
-1. **Open the current year folder and start Claude Code** - Open the folder for the current year (e.g., `2025/`) in a text editor with ledger syntax support. Good options include Vim with ledger plugin or VS Code with ledger extension. Open a terminal in this folder and start Claude Code by running `claude`. Most editors have built-in terminal applications, and some like VS Code have Claude Code extensions that can be installed for seamless integration. This folder should be stored in its own private git repository for version control of your financial data.
+1. **Open the current year folder and start Claude Code** - Open the folder for the current year (e.g., `2025/`) in a text editor with ledger syntax support. Good options include Vim with ledger plugin or VS Code with ledger extension. Open a terminal in your ledger-starter root directory (not the year folder) and start Claude Code by running `claude`. Most editors have built-in terminal applications, and some like VS Code have Claude Code extensions that can be installed for seamless integration. This folder should be stored in its own private git repository for version control of your financial data.
 
 2. **Add transactions from receipts** - Process any receipts, invoices, or checks from the previous day. Keeping physical receipts provides detailed line-item information for accurate expense categorization, serves as proof for warranties and returns, and creates an audit trail for tax purposes. See [Receipt Processing](receipt-processing.md) for detailed instructions on how I use Claude Code to automatically enter transactions from scanned receipts.
 
@@ -45,4 +45,4 @@ The [README](../README.md) contains detailed installation instructions for both 
 
 ## Summary
 
-That's it! What once seemed like a daunting daily task now takes just 5-10 minutes each morning. The combination of ledger's power and Claude Code's assistance makes tracking finances surprisingly painless. Sure, there's a learning curve at first, the clarity and control you gain over your finances is worth those few minutes each day. Plus, there's something oddly satisfying about watching everything balance perfectly at the end.
+That's it! What once seemed like a daunting daily task now takes just 5-10 minutes each morning. The combination of ledger's power and Claude Code's assistance makes tracking finances surprisingly painless. Sure, there's a learning curve at first, but the clarity and control you gain over your finances is worth those few minutes each day. Plus, there's something oddly satisfying about watching everything balance perfectly at the end.
